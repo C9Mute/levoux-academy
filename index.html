@@ -1491,6 +1491,8 @@ function showAuthSuccess(title, msg) {
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
+    console.log('LOGIN CLICKED');
+
     const email = document.getElementById('li-email').value;
     const password = document.getElementById('li-pass').value;
 
