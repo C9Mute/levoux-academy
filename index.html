@@ -1322,22 +1322,31 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeContactModal();
 });
 
-document.getElementById('contactForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const name  = document.getElementById('cf-name').value.trim();
-  const email = document.getElementById('cf-email').value.trim();
-  if (!name || !email) {
-    // simple inline validation glow
-    if (!name)  document.getElementById('cf-name').focus();
-    else        document.getElementById('cf-email').focus();
-    return;
-  }
-  // Hide form, show success
-  document.getElementById('modalFormWrap').style.display = 'none';
-  document.getElementById('modalSuccess').classList.add('show');
-  // auto-close after 3.5s
-  setTimeout(closeContactModal, 3500);
-});
+const contactForm = document.getElementById('contactForm');
+
+if (contactForm) {
+
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const name = document.getElementById('cf-name').value.trim();
+        const email = document.getElementById('cf-email').value.trim();
+
+        if (!name || !email) {
+            if (!name)
+                document.getElementById('cf-name').focus();
+            else
+                document.getElementById('cf-email').focus();
+            return;
+        }
+
+        document.getElementById('modalFormWrap').style.display = 'none';
+        document.getElementById('modalSuccess').classList.add('show');
+
+        setTimeout(closeContactModal, 3500);
+    });
+
+}
 
 // Make cursor enlarge over modal interactive elements
 document.querySelectorAll('.modal-close, .modal-submit, .mfield input, .mfield textarea, .mfield select').forEach(el => {
