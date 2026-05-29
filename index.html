@@ -1304,11 +1304,19 @@ function closeContactModal() {
   document.body.style.overflow = '';
 }
 
-document.getElementById('modalClose').addEventListener('click', closeContactModal);
+const modalClose = document.getElementById('modalClose');
 
-document.getElementById('contactModal').addEventListener('click', function(e) {
-  if (e.target === this) closeContactModal();
-});
+if (modalClose) {
+    modalClose.addEventListener('click', closeContactModal);
+}
+
+const contactModal = document.getElementById('contactModal');
+
+if (contactModal) {
+    contactModal.addEventListener('click', function(e) {
+        if (e.target === this) closeContactModal();
+    });
+}
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeContactModal();
@@ -1420,23 +1428,11 @@ document.querySelectorAll('.modal-close, .modal-submit, .mfield input, .mfield t
 
 <script>
 
-const contactModal = document.getElementById('contactModal');
-const modalClose = document.getElementById('modalClose');
-
-modalClose.addEventListener('click', () => {
-
-    contactModal.classList.remove('open');
-
-    document.body.style.overflow = 'auto';
-
-});
-
-
-
 // ====== AUTH MODAL ======
 function openAuthModal(e, tab) {
-  if (e) e.preventDefault();
-  const overlay = document.getElementById('authModal');
+    if (e) e.preventDefault();
+
+    const overlay = document.getElementById('authModal')
   overlay.classList.add('open');
   document.getElementById('authSuccess').classList.remove('show');
   document.getElementById('panelLogin').style.display  = '';
@@ -1512,36 +1508,6 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   }
   if (!ok) return;
   showAuthSuccess('ברוכים הבאים!', 'כניסה לחשבון מתבצעת...');
-});
-
-// Signup submit
-document.getElementById('signupForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const fname = document.getElementById('su-fname');
-  const email = document.getElementById('su-email');
-  const pass  = document.getElementById('su-pass');
-  let ok = true;
-  [fname, email, pass].forEach(f => f.classList.remove('input-error'));
-  if (!fname.value.trim()) {
-    fname.classList.add('input-error');
-    fname.closest('.af').classList.add('shake');
-    setTimeout(() => fname.closest('.af').classList.remove('shake'), 500);
-    ok = false;
-  }
-  if (!email.value.trim() || !/\S+@\S+\.\S+/.test(email.value)) {
-    email.classList.add('input-error');
-    email.closest('.af').classList.add('shake');
-    setTimeout(() => email.closest('.af').classList.remove('shake'), 500);
-    ok = false;
-  }
-  if (pass.value.length < 8) {
-    pass.classList.add('input-error');
-    pass.closest('.af').classList.add('shake');
-    setTimeout(() => pass.closest('.af').classList.remove('shake'), 500);
-    ok = false;
-  }
-  if (!ok) return;
-  showAuthSuccess('החשבון נוצר!', 'ברוכים הבאים ל-LEVOUX 🎉');
 });
 
 // Close listeners
@@ -1699,13 +1665,6 @@ authClose.addEventListener('click', () => {
 });
 
 // מעבר לדאשבורד אחרי לחיצה על כניסה
-document.querySelector('.auth-submit').addEventListener('click', function(e) {
-
-    e.preventDefault();
-
-    window.location.href = 'dashboard.html';
-
-});
 
 document.querySelectorAll('img').forEach(img => {
 
@@ -1717,5 +1676,49 @@ document.addEventListener('contextmenu', e => e.preventDefault());
 document.body.style.overflow = 'auto';
 
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-</body></html>
+<script>
+const supabaseUrl = 'https://rhahkgxzffpknkdxcqxz.supabase.co';
+
+const supabaseKey = 'sb_publishable_7YQF5vsM4mItk4xKSJjWlg_VCWtYeXb';
+
+const supabaseClient = window.supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+);
+document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    console.log('LEVOUX TEST 12345');
+
+    const firstName = document.getElementById('su-fname').value;
+    const lastName = document.getElementById('su-lname').value;
+    const phone = document.getElementById('su-phone').value;
+    const email = document.getElementById('su-email').value;
+    const password = document.getElementById('su-pass').value;
+
+    const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+            data: {
+                first_name: firstName,
+                last_name: lastName,
+                phone: phone
+            }
+        }
+    });
+
+    console.log('SUPABASE RESPONSE', data, error);
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    alert('נרשמת בהצלחה!');
+});
+</script>
+</body>
+</html>
